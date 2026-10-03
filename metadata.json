@@ -1,0 +1,6 @@
+{
+  "name": "WAQAR WEBSITE INQUIRY",
+  "description": "Manage Every Inquiry. Every Call. Every Customer. High-performance system with real relational database, calling, reminders, payments, and receipts.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
