@@ -1,0 +1,78 @@
+name: Build Waqar Website APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout repository
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # 3. Setup Bun
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      # 4. Install dependencies using Bun
+      - name: Install dependencies
+        run: bun install
+
+      # 5. Build website
+      - name: Build website
+        run: bun run build
+
+      # 6. Install Capacitor
+      - name: Install Capacitor
+        run: bun add @capacitor/core @capacitor/cli @capacitor/android
+
+      # 7. Create Capacitor configuration
+      - name: Create Capacitor config
+        run: |
+          bunx cap init "Waqar Website Enquiry" "com.waqar.websiteenquiry" --web-dir dist
+
+      # 8. Add Android platform
+      - name: Add Android
+        run: bunx cap add android
+
+      # 9. Sync website with Android project
+      - name: Sync Android
+        run: bunx cap sync android
+
+      # 10. Setup Java
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      # 11. Setup Android SDK
+      - name: Setup Android
+        uses: android-actions/setup-android@v3
+
+      # 12. Build APK
+      - name: Build APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      # 13. Upload APK
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Waqar-Website-Enquiry-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
